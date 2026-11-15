@@ -1,0 +1,59 @@
+name: Publish verified Prism phone update
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_url:
+        description: Short-lived URL for the verified GitHub Actions APK artifact
+        required: true
+        type: string
+      artifact_sha256:
+        description: SHA-256 digest supplied by the source GitHub Actions artifact API
+        required: true
+        type: string
+      version_name:
+        description: Verified APK version name
+        required: true
+        type: string
+      version_code:
+        description: Verified Android version code
+        required: true
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: prism-phone-update-feed
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            tools
+            .github
+      - name: Fetch only the approved release artifact
+        env:
+          ARTIFACT_URL: ${{ inputs.artifact_url }}
+          ARTIFACT_SHA256: ${{ inputs.artifact_sha256 }}
+        run: python tools/fetch-artifact.py "$RUNNER_TEMP/prism-phone-update"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Test release validation and atomic publication
+        run: node --test tools/publisher.test.mjs
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools build-tools;35.0.0'
+      - name: Check APK signature and publish atomically
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_VERSION_NAME: ${{ inputs.version_name }}
+          EXPECTED_VERSION_CODE: ${{ inputs.version_code }}
+        run: node tools/publish-apk.mjs "$RUNNER_TEMP/prism-phone-update"
