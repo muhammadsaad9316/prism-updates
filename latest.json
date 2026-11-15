@@ -1,10 +1,10 @@
 {
   "schema": 1,
   "packageName": "app.prism.labcontroller",
-  "versionCode": 302501,
-  "versionName": "3.0.25",
-  "apkUrl": "https://raw.githubusercontent.com/muhammadsaad9316/prism-updates/main/releases/302501/prism.apk",
-  "size": 6122509,
-  "sha256": "182b948bc13c2bbc58ba45eb0dc65d1908239e6b4475fb117df0b974e9ca8190",
+  "versionCode": 302601,
+  "versionName": "3.0.26",
+  "apkUrl": "https://raw.githubusercontent.com/muhammadsaad9316/prism-updates/main/releases/302601/prism.apk",
+  "size": 6124856,
+  "sha256": "b36ded67dd0d4bba47969c8f32b7dfc8b79a89c7b49f301d6cf76407a0711cb6",
   "certificateSha256": "306c50c5d90664e524dd89ad77b86f9bfed215b40e90337a02c3d0f1f47f4313"
 }
